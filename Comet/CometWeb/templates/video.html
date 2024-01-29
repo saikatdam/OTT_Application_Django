@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Watch{% endblock title %}   
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{% static 'css/video.css' %}">
+{% endblock head %}
+  {% block body %}
+  <div class="video-container">
+    {% for i in movie %}
+    <video src="/media/{{i.moviefile}}" poster="/media/{{i.poster}}" controls controlsList="nodownload" width="1000"></video>
+    {% endfor %}
+</div>  
+{% for i in movie %}
+  <div class="video-content" style="margin-left:30px;margin-top:80px;">
+    <div class="name" style="color:#f1683a;font-weight:800;font-size:40px;margin-left:45px;margin-top:0px;letter-spacing:2px;">Name: {{i.name}}
+    </div>
+    <div class="year" style="color:#ffffff;font-weight:600;font-size:32px;margin-left:45px;margin-top:0px;">Release year: {{i.year}}</div>
+    <div class="plot" style="color:#f1683a;font-weight:600;font-size:30px;margin-left:45px;margin-top:0px;text-align:justify;padding-right:40px;letter-spacing:1px;">Plot: <span class="desc"style="color:#ffffff;font-weight:400;font-size:20px;margin-left:30px;margin-top:0px;">{{i.description}}</span></div>
+    {% endfor %}  
+</div>
+  {% endblock body %}
+
+{% comment %} <script src="{% static 'video.js' %}"></script> {% endcomment %}

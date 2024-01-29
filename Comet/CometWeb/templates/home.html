@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}Comet{% endblock title %}
+{% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock head %}
+
+ {% block body %}
+<div class="carousel">
+    <!-- list item -->
+    <div class="list">
+        {% for items in carousel %}
+        <div class="item">
+            <img src="/media/{{items.carousel.poster}}">
+            <div class="content">
+                <div class="title">COMET MOVIES</div>
+                <div class="topic">{{items.carousel.name.upper}}</div>
+                <div class="des">
+                    <!-- lorem 50 -->
+                    {{items.carousel.description}}
+                </div>
+                <div class="buttons" >
+                    <a href="/authenticate/{{items.carousel.id}}"><button style="height: 100%;width: 130px;border-radius: 5px;cursor:pointer;">Watch Now</button></a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- list thumnail -->
+    <div class="thumbnail">
+        {% for item in carousel %}
+        <div class="item">
+            <img src="/media/{{item.carousel.poster}}">
+            <div class="content">
+                <div class="title">
+                    <h2>{{item.carousel.name.upper}}</h2>
+                </div>
+            </div>
+        
+        </div>  
+        {% endfor %}
+    </div>    
+    <!-- next prev -->
+
+    <div class="arrows">
+        <button id="prev"><</button>
+        <button id="next">></button>
+    </div>
+    <!-- time running -->
+    <div class="time"></div>
+</div>
+{% for genre,movies in allmovies.items %}
+<div class="movietitle" style="color:#f1683a;font-weight:800;font-size:40px;margin-left:50px;margin-top:0px;">{{genre}} MOVIES   <a href="/genreList/{{genre}}" style="text-decoration:none;color:#ffffff;font-size:30px;margin-left:10px;">See more <i class="fa-solid fa-angle-right" style="color:#f1683a;font-size:20px;"></i></a></div>
+<div class="movieGallery">
+    <button id="scrollprev" class="scroll prev" style="background: rgba(0,0,0,0);margin:0px;"><i class="fa-solid fa-angle-left" style="color: #ffffff;font-weight:bolder;font-size:30px;margin-left: 2px;"></i></button>
+    <div class="viewGallery">
+  
+      {% for movie in movies %}
+        <div class="Card" onmouseover="onhover(this)" onmouseout="outhover(this)">
+            <a href="/authenticate/{{movie.id}}"> <img class="cardImage card-img" src="/media/{{movie.poster}}" alt="">
+            <div class="card_moviename"><span><h2>{{movie.name}}</h2><h3>({{movie.year}})</h3></span></div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+      <button id="scrollnext" class="scroll next" style="background: rgba(0,0,0,0);margin:0px;"><i class="fa-solid fa-angle-right" style="color: #ffffff;font-size:30px;margin-right:10px;"></i></button>
+
+</div>
+{% endfor %}
+  {% endblock body%}
+
+
+  {% block script %}
+  <script>
+  //step 1: get DOM
+ let nextDom = document.getElementById('next');
+let prevDom = document.getElementById('prev');
+
+let carouselDom = document.querySelector('.carousel');
+let SliderDom = carouselDom.querySelector('.carousel .list');
+let thumbnailBorderDom = document.querySelector('.carousel .thumbnail');
+let thumbnailItemsDom = thumbnailBorderDom.querySelectorAll('.item');
+let timeDom = document.querySelector('.carousel .time');
+
+thumbnailBorderDom.appendChild(thumbnailItemsDom[0]);
+let timeRunning = 3000;
+let timeAutoNext = 7000;
+
+nextDom.onclick = function(){
+    showSlider('next');    
+}
+
+prevDom.onclick = function(){
+    showSlider('prev');    
+}
+let runTimeOut;
+let runNextAuto = setTimeout(() => {
+    next.click();
+}, timeAutoNext)
+function showSlider(type){
+    let  SliderItemsDom = SliderDom.querySelectorAll('.carousel .list .item');
+    let thumbnailItemsDom = document.querySelectorAll('.carousel .thumbnail .item');
+    
+    if(type === 'next'){
+        SliderDom.appendChild(SliderItemsDom[0]);
+        thumbnailBorderDom.appendChild(thumbnailItemsDom[0]);
+        carouselDom.classList.add('next');
+    }else{
+        SliderDom.prepend(SliderItemsDom[SliderItemsDom.length - 1]);
+        thumbnailBorderDom.prepend(thumbnailItemsDom[thumbnailItemsDom.length - 1]);
+        carouselDom.classList.add('prev');
+    }
+    clearTimeout(runTimeOut);
+    runTimeOut = setTimeout(() => {
+        carouselDom.classList.remove('next');
+        carouselDom.classList.remove('prev');
+    }, timeRunning);
+
+    clearTimeout(runNextAuto);
+    runNextAuto = setTimeout(() => {
+        next.click();
+    }, timeAutoNext)
+}
+let next = document.querySelectorAll(".next");
+let prev = document.querySelectorAll(".prev");
+let width = document.querySelector(".viewGallery").clientWidth;
+next.forEach(next=>{
+next.addEventListener("click",()=>{
+   let parent = next.parentNode;
+    let scrollcontainer = parent.querySelector(".viewGallery");
+    scrollcontainer.style.scrollBehavior="smooth";
+    scrollcontainer.scrollLeft+=width;
+});
+});
+prev.forEach(prev=>{
+prev.addEventListener("click",()=>{
+    let parent =prev.parentNode;
+    let scrollcontainer = parent.querySelector(".viewGallery");
+    scrollcontainer.style.scrollBehavior="smooth";
+    scrollcontainer.scrollLeft-=width;
+});
+});
+</script>
+  {% endblock script %}
